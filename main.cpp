@@ -154,19 +154,24 @@ public:
     }
 
     void solveByCommon() {
-        int disTemp = 0;
-        this->minDis = INT_MAX;
-        for (int i = 0; i < this->pointsNum; i++) {
-            for (int j = i + 1; j < this->pointsNum; j++) {
-                disTemp = distance(this->points[i], this->points[j]);
-                if (disTemp < this->minDis) {
-                    this->minDis = disTemp;
-                    this->point_1[0] = this->points[i][0];
-                    this->point_1[1] = this->points[i][1];
-                    this->point_2[0] = this->points[j][0];
-                    this->point_2[1] = this->points[j][1];
+        for (int i = 0; i < this->groups.size(); i++) {
+            this->points = this->groups[i];
+            this->pointsNum = this->points.size();
+            int disTemp = 0;
+            this->minDis = INT_MAX;
+            for (int i = 0; i < this->pointsNum; i++) {
+                for (int j = i + 1; j < this->pointsNum; j++) {
+                    disTemp = distance(this->points[i], this->points[j]);
+                    if (disTemp < this->minDis) {
+                        this->minDis = disTemp;
+                        this->point_1[0] = this->points[i][0];
+                        this->point_1[1] = this->points[i][1];
+                        this->point_2[0] = this->points[j][0];
+                        this->point_2[1] = this->points[j][1];
+                    }
                 }
             }
+            this->printResult(i + 1);
         }
     }
 
@@ -205,7 +210,7 @@ public:
             this->sortByX();
             //        this->sortByY();
             minDisArea(0, this->pointsNum - 1);
-            this->printResult();
+            this->printResult(i + 1);
             for (int j = 0; j < this->result_XY.size(); j++) {
                 saveData << this->result_XY[j] << "\t";
             }
@@ -244,7 +249,7 @@ public:
                     if (this->minDis >= disTemp) {
                         if (this->minDis != disTemp) {
                             this->result_XY.clear();
-                        }else if (this->isSame(this->pointsX[i][0], this->pointsX[i][1], pointsX[j][0], pointsX[j][1]))
+                        } else if (this->isSame(this->pointsX[i][0], this->pointsX[i][1], pointsX[j][0], pointsX[j][1]))
                             continue;
                         this->minDis = disTemp;
 
@@ -300,11 +305,11 @@ public:
                && this->point_2[0] == x_2 && this->point_2[1] == y_2;
     }
 
-    void printResult() {
-        cout << "the closest pair of points in " << this->pointsNum << " points is:" << endl;
-        cout << "Point_1:\n\tx: " << this->point_1[0] << " y: " << this->point_1[1] << endl;
-        cout << "Point_2:\n\tx: " << this->point_2[0] << " y: " << this->point_2[1] << endl;
-        cout << "the distance's square between two points is " << this->minDis << endl;
+    void printResult(int i = 0) {
+        cout << "the closest pair of points in group " << i << " is:" << endl;
+        cout << "Point_1:\tx: " << this->point_1[0] << " y: " << this->point_1[1] << endl;
+        cout << "Point_2:\tx: " << this->point_2[0] << " y: " << this->point_2[1] << endl;
+        cout << "the distance's square between two points is " << this->minDis << endl << endl;
     }
 
     void printPoints() {
@@ -341,25 +346,28 @@ int main() {
     //    std::cout << "Hello, World!" << std::endl;
 //    Data d;
 //    d.randomNumberToFile("D://points.txt", 5000, 600000);
+
     Solution s;
-    s.readFromFile("D://Data.txt");
+    s.readFromFile("in.dat");
 
 
     DWORD start, end;
     DWORD totalTime;
 
-    start = GetTickCount();
+//    start = GetTickCount();
+    cout << "分治法: " << endl;
     s.solveByDivider();
-    end = GetTickCount();
-    totalTime = end - start;
-    cout << "分治法的时间: " << totalTime << endl;
+//    end = GetTickCount();
+//    totalTime = end - start;
+//    cout << "分治法的时间: " << totalTime << endl;
 //    s.printResult();
 
-    start = GetTickCount();
-//    s.solveByCommon();
-    end = GetTickCount();
-    totalTime = end - start;
-    cout << "搜索法的时间: " << totalTime << endl;
+//    start = GetTickCount();
+    cout << "搜索法: " << endl;
+    s.solveByCommon();
+//    end = GetTickCount();
+//    totalTime = end - start;
+//    cout << "搜索法的时间: " << totalTime << endl;
 
 //    s.printResult();
     return 0;
