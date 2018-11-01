@@ -4,8 +4,6 @@
 #include <fstream>
 #include <sstream>
 #include <random>
-#include <time.h>
-#include <windows.h>
 #include <algorithm>
 
 using namespace std;
@@ -53,47 +51,6 @@ public:
         this->point_2[0] = -1;
         this->point_2[1] = -1;
     }
-
-//    bool readFromFile(string filePath) {
-//        int x, y;
-//        string line;
-//        ifstream infile(filePath);
-//        stringstream ss;
-//
-//        if (!infile.is_open()) {
-//            cout << "File Open Error" << endl;
-//            return false;
-//        }
-//
-//        int pos = 0;
-//        int *posTemp = 0;
-//        while (!infile.eof()) {
-//            getline(infile, line);
-//            ss.clear();
-//            ss.str(line);
-//            ss >> x >> y;
-//            if (ss.fail()) {
-//                continue;
-//            }
-//            posTemp = new int[2];
-//            posTemp[0] = x;
-//            posTemp[1] = y;
-//            if (y == 25918) {
-//                cout << "x: " << x << " y: " << y << endl;
-//
-//            }
-//            this->points.push_back(posTemp);
-//
-//            pos++;
-//
-//            //            cout << "x: " << x << " y: " << y << endl;
-//        }
-//        this->pointsNum = pos;
-//        cout << "the num of points is " << pos << endl;
-//
-//        infile.close();
-//        return true;
-//    }
 
     bool readFromFile(string filePath) {
 
@@ -180,25 +137,12 @@ public:
         this->pointsX.assign(this->points.begin(), this->points.end());
     }
 
-    void sortByY() {
-        sort(this->points.begin(), this->points.end(), cmpY);
-        this->pointsY.assign(this->points.begin(), this->points.end());
-    }
 
     void sortByY(vector<int *> &my_points, int start, int end) {
         this->pointsT.assign(my_points.begin() + start, my_points.begin() + end);
         sort(this->pointsT.begin(), this->pointsT.end(), cmpY);
-        //        this->pointsY.assign(this->points.begin(), this->points.end());
     }
 
-    void copyPoints(int **&source, int **&backUp) {
-        backUp = new int *[this->pointsNum];
-        for (int i = 0; i < this->pointsNum; i++) {
-            backUp[i] = new int[2];
-            backUp[i][0] = source[i][0];
-            backUp[i][1] = source[i][1];
-        }
-    }
 
     void solveByDivider() {
         ofstream saveData("out.dat");
@@ -208,7 +152,6 @@ public:
             this->minDis = INT_MAX;
 
             this->sortByX();
-            //        this->sortByY();
             minDisArea(0, this->pointsNum - 1);
             this->printResult(i + 1);
             for (int j = 0; j < this->result_XY.size(); j++) {
@@ -230,7 +173,7 @@ public:
             int minDisR = minDisArea(mid + 1, end);
 
             this->minDis = min(minDisL, minDisR);
-            int startMid = mid, endMid = mid; // 问题好像出在这里
+            int startMid = mid, endMid = mid;
             for (; startMid > start && (this->pointsX[startMid][0] + this->minDis) >= this->pointsX[mid][0];) {
                 startMid--;
             }
@@ -312,12 +255,6 @@ public:
         cout << "the distance's square between two points is " << this->minDis << endl << endl;
     }
 
-    void printPoints() {
-        cout << "All Points: " << endl;
-        for (int i = 0; i < this->pointsNum; i++) {
-            cout << "x: " << this->points[i][0] << " y: " << this->points[i][1] << endl;
-        }
-    }
 
     ~Solution() {
         for (int j = 0; j < this->groups.size(); j++) {
@@ -329,46 +266,16 @@ public:
     }
 };
 
-class Data {
-public:
-    void randomNumberToFile(string filePath, int num, int range) {
-        ofstream outfile(filePath);
-        srand((unsigned int) time(0));
-        for (int i = 0; i < num; i++) {
-            outfile << rand() % range << " " << rand() % range << endl;
-        }
-        outfile.close();
-    }
-};
-
 
 int main() {
-    //    std::cout << "Hello, World!" << std::endl;
-//    Data d;
-//    d.randomNumberToFile("D://points.txt", 5000, 600000);
 
     Solution s;
     s.readFromFile("in.dat");
 
-
-    DWORD start, end;
-    DWORD totalTime;
-
-//    start = GetTickCount();
     cout << "分治法: " << endl;
     s.solveByDivider();
-//    end = GetTickCount();
-//    totalTime = end - start;
-//    cout << "分治法的时间: " << totalTime << endl;
-//    s.printResult();
 
-//    start = GetTickCount();
     cout << "搜索法: " << endl;
     s.solveByCommon();
-//    end = GetTickCount();
-//    totalTime = end - start;
-//    cout << "搜索法的时间: " << totalTime << endl;
-
-//    s.printResult();
     return 0;
 }
